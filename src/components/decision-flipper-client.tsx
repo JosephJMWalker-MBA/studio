@@ -39,7 +39,7 @@ export function DecisionFlipperClient() {
         variant: "destructive",
       });
     } finally {
-      setStatus("resultShown"); // Revert status to resultShown after ad attempt
+      setStatus("resultShown"); 
     }
   };
 
@@ -67,9 +67,9 @@ export function DecisionFlipperClient() {
       
       setTimeout(() => {
         setFlipResult(outcome);
-        setStatus("resultShown"); // Initial status update
+        setStatus("resultShown"); 
         const chosenDecision = outcome === "heads" ? generatedOptions.heads : generatedOptions.tails;
-        fetchAd(chosenDecision); // Fetch ad after result is known
+        fetchAd(chosenDecision); 
       }, 2500); 
     } catch (error) {
       console.error("Error generating decision options:", error);
@@ -165,13 +165,14 @@ export function DecisionFlipperClient() {
                 <span>Sponsored Ad</span>
               </div>
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="w-full sm:w-1/3 h-40 sm:h-auto relative rounded-md overflow-hidden shadow-sm">
+                <div className="w-full sm:w-1/3 h-40 relative rounded-md overflow-hidden shadow-sm">
                   <Image 
                     src={adContent.adImageUrl} 
                     alt="Generated Ad Image" 
                     layout="fill" 
                     objectFit="cover"
                     data-ai-hint="advertisement product"
+                    unoptimized={true}
                   />
                 </div>
                 <div className="flex-1 text-center sm:text-left">
