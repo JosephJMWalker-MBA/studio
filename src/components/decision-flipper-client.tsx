@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { Coins, Loader2, HelpCircle, ShoppingCart, Info } from "lucide-react";
 import Image from 'next/image';
@@ -63,6 +64,7 @@ export function DecisionFlipperClient() {
       setOptions(generatedOptions);
       setStatus("flipping");
 
+      // Simulating coin flip delay and result
       const outcome = Math.random() < 0.5 ? "heads" : "tails";
       
       setTimeout(() => {
@@ -70,7 +72,7 @@ export function DecisionFlipperClient() {
         setStatus("resultShown"); 
         const chosenDecision = outcome === "heads" ? generatedOptions.heads : generatedOptions.tails;
         fetchAd(chosenDecision); 
-      }, 2500); 
+      }, 2500); // Adjust delay as needed
     } catch (error) {
       console.error("Error generating decision options:", error);
       toast({
@@ -111,7 +113,7 @@ export function DecisionFlipperClient() {
           <CardTitle className="text-4xl font-bold font-headline">Decision Flipper</CardTitle>
           <CardDescription className="text-lg">Can't decide? Let fate choose for you!</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-8"> {/* Increased spacing */}
           <div className="space-y-2">
             <Label htmlFor="question" className="flex items-center text-md font-medium">
               <HelpCircle className="w-5 h-5 mr-2 text-primary" />
@@ -136,7 +138,7 @@ export function DecisionFlipperClient() {
             <div className="p-4 space-y-3 text-center bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground">The AI suggests:</p>
               <p><strong className="text-primary">Heads:</strong> {options.heads}</p>
-              <p><strong className="text-secondary-foreground">Tails:</strong> {options.tails}</p>
+              <p><strong className="text-slate-600">Tails:</strong> {options.tails}</p> {/* Adjusted tails color for consistency if coin changes */}
             </div>
           )}
           
@@ -159,28 +161,36 @@ export function DecisionFlipperClient() {
           )}
 
           {status === "resultShown" && adContent && adContent.adImageUrl && (
-            <div className="mt-6 p-4 border border-accent/50 rounded-lg shadow-md bg-accent/10">
-              <div className="flex items-center mb-2 text-sm font-medium text-accent">
-                <ShoppingCart className="w-5 h-5 mr-2" />
-                <span>Sponsored Ad</span>
-              </div>
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="w-full sm:w-1/3 h-40 relative rounded-md overflow-hidden shadow-sm">
-                  <Image 
-                    src={adContent.adImageUrl} 
-                    alt="Generated Ad Image" 
-                    layout="fill" 
-                    objectFit="cover"
-                    data-ai-hint="advertisement product"
-                    unoptimized={true}
-                  />
+            <TooltipProvider delayDuration={100}>
+              <div className="mt-6 p-4 border border-accent/50 rounded-lg shadow-md bg-accent/10">
+                <div className="flex items-center mb-3 text-sm font-medium text-accent">
+                  <ShoppingCart className="w-5 h-5 mr-2" />
+                  <span>Sponsored Ad</span>
                 </div>
-                <div className="flex-1 text-center sm:text-left">
-                  <p className="text-md font-semibold text-accent-foreground">{adContent.adText}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Prompt: "{adContent.adImagePrompt}"</p>
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="w-full sm:w-1/3 h-40 relative rounded-md overflow-hidden shadow-sm cursor-help">
+                        <Image 
+                          src={adContent.adImageUrl} 
+                          alt="Generated Ad Image" 
+                          layout="fill" 
+                          objectFit="cover"
+                          data-ai-hint="advertisement product"
+                          unoptimized={true}
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" align="center" className="max-w-xs">
+                      <p className="text-xs">Image Prompt: "{adContent.adImagePrompt}"</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <div className="flex-1 text-center sm:text-left">
+                    <p className="text-md font-semibold text-foreground">{adContent.adText}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </TooltipProvider>
           )}
 
         </CardContent>
@@ -196,7 +206,7 @@ export function DecisionFlipperClient() {
           </Button>
         </CardFooter>
       </Card>
-      <div className="mt-8 text-xs text-muted-foreground max-w-lg text-center p-4 border border-dashed border-muted-foreground/30 rounded-md bg-muted/50">
+      <div className="mt-8 text-xs text-muted-foreground max-w-lg text-center p-4 border border-border rounded-md bg-muted"> {/* Updated disclaimer styling */}
         <Info className="w-4 h-4 inline mr-1 mb-0.5" />
         This app is designed to help you make decisions for things that are insignificant, but ultimately the choice is always yours. Ad content is AI-generated and may not be real.
       </div>
