@@ -57,7 +57,7 @@ const generateAdFlow = ai.defineFlow(
     }
 
     const {media} = await ai.generate({
-      model: 'googleai/gemini-2.0-flash-exp',
+      model: 'googleai/gemini-2.0-flash-preview-image-generation',
       prompt: adIdea.adImagePrompt,
       config: {
         responseModalities: ['TEXT', 'IMAGE'],
