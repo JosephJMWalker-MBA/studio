@@ -18,6 +18,29 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    // Exclude genkit and its dependencies from the client-side bundle
+    if (!isServer) {
+      config.externals = [
+        ...(config.externals || []),
+        'genkit',
+        'firebase-admin',
+        'long',
+        '@grpc/grpc-js',
+        'google-gax',
+        'gaxios',
+        'google-auth-library',
+        'node-fetch',
+        'fs',
+        'util',
+        'child_process',
+        'os',
+        'https',
+        'http'
+      ];
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
