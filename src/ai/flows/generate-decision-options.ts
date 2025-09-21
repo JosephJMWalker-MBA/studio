@@ -8,11 +8,13 @@
  * - GenerateDecisionOptionsOutput - The return type for the generateDecisionOptions function.
  */
 
-import {ai} from '@/ai/genkit';
+import {genkit} from 'genkit';
+import {googleAI} from '@genkit-ai/googleai';
 import {z} from 'genkit';
 
 const GenerateDecisionOptionsInputSchema = z.object({
   question: z.string().describe('The user provided question.'),
+  apiKey: z.string().describe('The user-provided Gemini API key.'),
 });
 
 export type GenerateDecisionOptionsInput = z.infer<
@@ -31,29 +33,24 @@ export type GenerateDecisionOptionsOutput = z.infer<
 export async function generateDecisionOptions(
   input: GenerateDecisionOptionsInput
 ): Promise<GenerateDecisionOptionsOutput> {
-  return generateDecisionOptionsFlow(input);
-}
+  // Initialize a new Genkit AI instance with the user's API key for this request.
+  const ai = genkit({
+    plugins: [googleAI({apiKey: input.apiKey})],
+    model: 'googleai/gemini-2.0-flash',
+  });
 
-const prompt = ai.definePrompt({
-  name: 'generateDecisionOptionsPrompt',
-  input: {schema: GenerateDecisionOptionsInputSchema},
-  output: {schema: GenerateDecisionOptionsOutputSchema},
-  prompt: `You are a helpful assistant that provides fun and personalized decision options based on a user's question.
+  const prompt = ai.definePrompt({
+    name: 'generateDecisionOptionsPrompt',
+    input: {schema: z.object({question: z.string()})},
+    output: {schema: GenerateDecisionOptionsOutputSchema},
+    prompt: `You are a helpful assistant that provides fun and personalized decision options based on a user's question.
 
   Question: {{{question}}}
 
   Generate two distinct options, one for "heads" and one for "tails", tailored to the question. Be creative and engaging.
   `,
-});
+  });
 
-const generateDecisionOptionsFlow = ai.defineFlow(
-  {
-    name: 'generateDecisionOptionsFlow',
-    inputSchema: GenerateDecisionOptionsInputSchema,
-    outputSchema: GenerateDecisionOptionsOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);
+  const {output} = await prompt({question: input.question});
+  return output!;
+}
