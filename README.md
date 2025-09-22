@@ -20,6 +20,3 @@ Welcome to Decision Flipper! This is a fun and interactive web application built
 -   **Framework**: [Next.js](https://nextjs.org/)
 -   **AI**: [Google's Genkit](https://firebase.google.com/docs/genkit) with the Gemini model
 -   **UI**: [React](https://react.dev/), [Tailwind CSS](https://tailwindcss.com/), [ShadCN UI](https://ui.shadcn.com/)
--   **Deployment**: Firebase App Hosting
-
-This project was bootstrapped with [Firebase Studio](https://firebase.google.com/docs/studio).

@@ -36,7 +36,6 @@ export async function generateDecisionOptions(
   // Initialize a new Genkit AI instance with the user's API key for this request.
   const ai = genkit({
     plugins: [googleAI({apiKey: input.apiKey})],
-    model: 'googleai/gemini-2.0-flash',
   });
 
   const prompt = ai.definePrompt({
