@@ -40,7 +40,6 @@ export async function generateDecisionOptions(
 
   const prompt = ai.definePrompt({
     name: 'generateDecisionOptionsPrompt',
-    model: 'gemini-pro',
     input: {schema: z.object({question: z.string()})},
     output: {schema: GenerateDecisionOptionsOutputSchema},
     prompt: `You are a helpful assistant that provides fun and personalized decision options based on a user's question.
