@@ -38,6 +38,9 @@ export function DecisionFlipperClient() {
     if (storedApiKey) {
       setApiKey(storedApiKey);
       setTempApiKey(storedApiKey);
+    } else {
+      // If no key, maybe open the settings automatically for first-time users.
+      // For now, we'll just let them click.
     }
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -49,16 +52,13 @@ export function DecisionFlipperClient() {
       recognition.lang = 'en-US';
 
       recognition.onresult = (event) => {
-        let interimTranscript = '';
         let finalTranscript = '';
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
             finalTranscript += event.results[i][0].transcript;
-          } else {
-            interimTranscript += event.results[i][0].transcript;
           }
         }
-        setQuestion(prev => (prev ? prev + ' ' : '') + finalTranscript);
+        setQuestion(prev => (prev ? prev.trim() + ' ' : '') + finalTranscript);
       };
 
       recognition.onend = () => {
@@ -97,12 +97,23 @@ export function DecisionFlipperClient() {
     }
   };
 
+  const handleForgetKey = () => {
+    setApiKey(null);
+    setTempApiKey('');
+    localStorage.removeItem(API_KEY_STORAGE_KEY);
+    setIsSettingsOpen(false);
+    toast({
+        title: "API Key Forgotten",
+        description: "Your Gemini API key has been removed.",
+    });
+  };
 
   const handleDictation = () => {
     if (isListening) {
       recognitionRef.current?.stop();
-      setIsListening(false);
     } else {
+      // Clear previous question before starting new dictation
+      setQuestion(''); 
       recognitionRef.current?.start();
       setIsListening(true);
     }
@@ -148,6 +159,8 @@ export function DecisionFlipperClient() {
       let description = "Failed to get suggestions. Please try again.";
       if (error.message?.includes('API key not valid')) {
         description = "Your API key is invalid. Please check it in the settings.";
+      } else if (error.message?.includes('429')) {
+        description = "You have exceeded your API quota. Please check your account or try again later.";
       }
       toast({
         title: "AI Error",
@@ -206,7 +219,8 @@ export function DecisionFlipperClient() {
                     Get a Gemini API Key from Google AI Studio
                   </a>
               </div>
-              <DialogFooter>
+              <DialogFooter className="sm:justify-between">
+                  <Button variant="outline" onClick={handleForgetKey}>Forget Key</Button>
                   <Button onClick={handleSaveApiKey}>Save Key</Button>
               </DialogFooter>
           </DialogContent>
@@ -250,7 +264,7 @@ export function DecisionFlipperClient() {
               )}
             </div>
              {!apiKey && (
-              <div className="flex items-center p-2 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
+              <div className="flex items-center p-2 mt-2 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
                 <AlertCircle className="h-4 w-4 mr-2 shrink-0" />
                 <span>Please set your Gemini API key in settings.</span>
               </div>
@@ -262,15 +276,15 @@ export function DecisionFlipperClient() {
           </div>
 
           {status === "flipping" && options && (
-            <div className="p-4 space-y-3 text-center bg-muted rounded-lg">
+            <div className="p-4 space-y-3 text-center bg-muted rounded-lg animate-in fade-in-50 duration-500">
               <p className="text-sm text-muted-foreground">The AI suggests:</p>
-              <p><strong className="text-primary">Heads:</strong> {options.heads}</p>
-              <p><strong className="text-slate-600">Tails:</strong> {options.tails}</p>
+              <p><strong className="text-slate-700">Heads:</strong> {options.heads}</p>
+              <p><strong className="text-slate-500">Tails:</strong> {options.tails}</p>
             </div>
           )}
           
           {status === "resultShown" && flipResult && options && (
-            <div className="p-6 space-y-3 text-center bg-primary/10 border border-primary rounded-lg shadow-md">
+            <div className="p-6 space-y-3 text-center bg-primary/10 border border-primary rounded-lg shadow-md animate-in fade-in-50 zoom-in-95 duration-500">
               <h3 className="text-2xl font-semibold text-primary font-headline">
                 The coin landed on: <span className="uppercase">{flipResult}!</span>
               </h3>
@@ -293,9 +307,9 @@ export function DecisionFlipperClient() {
           </Button>
         </CardFooter>
       </Card>
-      <div className="mt-8 text-xs text-muted-foreground max-w-lg text-center p-4 border border-border rounded-md bg-muted">
+      <div className="mt-8 text-xs text-muted-foreground max-w-lg text-center p-4 border border-border rounded-md bg-muted/50">
         <Info className="w-4 h-4 inline mr-1 mb-0.5" />
-        This app is designed to help you make decisions for things that are insignificant, but ultimately the choice is always yours.
+        This app uses generative AI and is for entertainment purposes only. The final decision is always yours.
       </div>
       <p className="mt-4 text-sm text-muted-foreground">
         Powered by Generative AI & a bit of luck.
@@ -303,3 +317,5 @@ export function DecisionFlipperClient() {
     </div>
   );
 }
+
+    
