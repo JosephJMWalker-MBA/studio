@@ -36,13 +36,13 @@ export async function generateDecisionOptions(
   // Initialize a new Genkit AI instance with the user's API key for this request.
   const ai = genkit({
     plugins: [googleAI({apiKey: input.apiKey})],
-    model: 'googleai/gemini-1.5-flash-latest',
   });
 
   const prompt = ai.definePrompt({
     name: 'generateDecisionOptionsPrompt',
     input: {schema: z.object({question: z.string()})},
     output: {schema: GenerateDecisionOptionsOutputSchema},
+    model: 'googleai/gemini-1.5-flash-latest',
     prompt: `You are a helpful assistant that provides fun and personalized decision options based on a user's question.
 
   Question: {{{question}}}
