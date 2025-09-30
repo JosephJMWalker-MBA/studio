@@ -42,7 +42,7 @@ export async function generateDecisionOptions(
     name: 'generateDecisionOptionsPrompt',
     input: {schema: z.object({question: z.string()})},
     output: {schema: GenerateDecisionOptionsOutputSchema},
-    model: 'googleai/gemini-1.5-flash-latest',
+    model: 'gemini-1.5-flash-latest',
     prompt: `You are a helpful assistant that provides fun and personalized decision options based on a user's question.
 
   Question: {{{question}}}
