@@ -59,7 +59,7 @@ export async function generateDecisionOptions(
   const {output} = await ai.generate({
     prompt: decisionOptionsPrompt,
     input: {question: input.question},
-    model: 'gemini-1.5-flash-latest',
+    model: 'gemini-pro',
   });
   return output!;
 }
