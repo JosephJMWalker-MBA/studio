@@ -8,8 +8,7 @@
  * - GenerateDecisionOptionsOutput - The return type for the generateDecisionOptions function.
  */
 
-import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
+import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateDecisionOptionsInputSchema = z.object({
@@ -30,27 +29,27 @@ export type GenerateDecisionOptionsOutput = z.infer<
   typeof GenerateDecisionOptionsOutputSchema
 >;
 
+// Define the prompt using the global AI instance.
+const decisionOptionsPrompt = ai.definePrompt({
+  name: 'generateDecisionOptionsPrompt',
+  input: {schema: z.object({question: z.string()})},
+  output: {schema: GenerateDecisionOptionsOutputSchema},
+  model: 'gemini-1.5-flash-latest',
+  prompt: `You are a helpful assistant that provides fun and personalized decision options based on a user's question.
+
+Question: {{{question}}}
+
+Generate two distinct options, one for "heads" and one for "tails", tailored to the question. Be creative and engaging.
+`,
+});
+
 export async function generateDecisionOptions(
   input: GenerateDecisionOptionsInput
 ): Promise<GenerateDecisionOptionsOutput> {
-  // Initialize a new Genkit AI instance with the user's API key for this request.
-  const ai = genkit({
-    plugins: [googleAI({apiKey: input.apiKey})],
-  });
-
-  const prompt = ai.definePrompt({
-    name: 'generateDecisionOptionsPrompt',
-    input: {schema: z.object({question: z.string()})},
-    output: {schema: GenerateDecisionOptionsOutputSchema},
-    model: 'gemini-1.5-flash-latest',
-    prompt: `You are a helpful assistant that provides fun and personalized decision options based on a user's question.
-
-  Question: {{{question}}}
-
-  Generate two distinct options, one for "heads" and one for "tails", tailored to the question. Be creative and engaging.
-  `,
-  });
-
-  const {output} = await prompt({question: input.question});
+  // Call the pre-defined prompt, passing the API key in the `auth` context.
+  const {output} = await decisionOptionsPrompt(
+    {question: input.question},
+    {auth: {apiKey: input.apiKey}}
+  );
   return output!;
 }
