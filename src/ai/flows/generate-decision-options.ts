@@ -32,6 +32,7 @@ export type GenerateDecisionOptionsOutput = z.infer<
 >;
 
 // Define the prompt structure using the global AI instance.
+// This defines the template, but does not execute it.
 const decisionOptionsPrompt = globalAi.definePrompt({
   name: 'generateDecisionOptionsPrompt',
   input: {schema: z.object({question: z.string()})},
@@ -57,7 +58,7 @@ export async function generateDecisionOptions(
   const {output} = await ai.generate({
     prompt: decisionOptionsPrompt,
     input: {question: input.question},
-    model: 'gemini-1.5-flash-latest',
+    model: 'gemini-pro',
   });
   return output!;
 }
