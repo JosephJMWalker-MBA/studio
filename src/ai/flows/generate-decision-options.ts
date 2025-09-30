@@ -39,7 +39,7 @@ const decisionOptionsPrompt = ai.definePrompt({
 
 Question: {{{question}}}
 
-Generate two distinct options, one for "heads" and one for "tails", tailored to the question. Be creative and engaging.
+Generate two distinct options, one for "heads" and one for "tails", tailored to the question.
 `,
 });
 
