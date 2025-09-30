@@ -1,9 +1,6 @@
 import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
 
-// This instance is now only used for development or server-side-only flows
-// if you choose to add them later. User-facing flows will be initialized
-// with the user's key.
-export const ai = genkit({
-  plugins: [googleAI()],
-});
+// This global instance is now only used to define prompts and flows.
+// It does not contain any plugins that require configuration, preventing
+// startup errors and allowing for per-request configuration in flows.
+export const ai = genkit();
