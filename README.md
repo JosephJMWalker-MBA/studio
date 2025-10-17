@@ -22,3 +22,5 @@ Welcome to Decision Flipper! This is a fun and interactive web application built
 -   **AI**: [Google's Genkit](https://firebase.google.com/docs/genkit) with the Gemini model
 -   **UI**: [React](https://react.dev/), [Tailwind CSS](https://tailwindcss.com/), [ShadCN UI](https://ui.shadcn.com/)
 -   **Security**: [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API) and [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) for secure client-side key storage.
+
+For more details on the AI agent's role in this project, see the [agent documentation](./agent.md).
